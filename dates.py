@@ -16,12 +16,12 @@
 """
 
 from beets.plugins import BeetsPlugin
-from beets.library import FieldQuery
+from beets.library import StringFieldQuery
 import beets
 import dateslib
 import datetime,time
 
-class DatesQuery(FieldQuery):
+class DatesQuery(StringFieldQuery):
     @classmethod
     def value_match(self, pattern, val):        
         b, e =  dateslib.inputstring(pattern)
