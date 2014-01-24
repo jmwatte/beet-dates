@@ -3,7 +3,7 @@ beet-dates
 
 plugin for beets that lets you search for musicfiles added between certain dates
 
-this plugin - for the lovely beets - 
+this plugin - for the lovely beets (https://github.com/sampsyo/beets) - 
 lets you do a search on the tag: added.
 
 Like this:
