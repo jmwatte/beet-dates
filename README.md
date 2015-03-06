@@ -50,11 +50,10 @@ the first part can be :
     this: ex.. this year, month, week, day, hour, minute,
           morning, afternoon, evening, night
           
-    last: returns the last year, month,week... till now.
-          So now is the end and count back a year, month...
+    prev: now is the end and count back a year, month...
           if today is friday than last week is last friday to now
           
-    prev: if today is friday than the prev week is ending last sunday
+    last: if today is friday than the last week is ending last sunday
           and beginning sunday a week further back
           
 and then there are these special words: 
