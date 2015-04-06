@@ -7,13 +7,16 @@ from itertools import *
 YmdHM = "%Y:%m:%d:%H:%M"    # standard formatting of datetime-input
 extra = timedelta  # alias to make it easy
 
-# helpermethods taht return the start, the end and the start/end  of different timeunits
+# helpermethods that return the start, the end and the start/end  of
+# different timeunits
+
+
 def startofyear(date):
     return datetime(year=date.year,  month=1,  day=1,  hour=0,  minute=0)
 
 
 def endofyear(date):
-    return datetime(year=date.year+1,  month=1,  day=1,  hour=0,  minute=0)
+    return datetime(year=date.year + 1,  month=1,  day=1,  hour=0,  minute=0)
 
 
 def startofmonth(date):
@@ -22,7 +25,7 @@ def startofmonth(date):
 
 
 def endofmonth(datex):
-    date = (startofmonth(datex)+extra(days=32)).replace(day=1)
+    date = (startofmonth(datex) + extra(days=32)).replace(day=1)
     return datetime(year=date.year, month=date.month, day=1, hour=0, minute=0)
 
 
@@ -32,7 +35,7 @@ def startofday(date):
 
 
 def endofday(datex):
-    date = startofday(datex)+extra(days=1)
+    date = startofday(datex) + extra(days=1)
     return datetime(year=date.year, month=date.month, day=date.day, hour=0,
                     minute=0)
 
@@ -43,7 +46,7 @@ def startofhour(date):
 
 
 def endofhour(datex):
-    date = startofhour(datex)+extra(hours=1)
+    date = startofhour(datex) + extra(hours=1)
     return datetime(year=date.year, month=date.month, day=date.day,
                     hour=date.hour, minute=0)
 
@@ -54,20 +57,20 @@ def startofminute(date):
 
 
 def endofminute(datex):
-    date = startofminute(datex)+timespan(minute=1)
+    date = startofminute(datex) + timespan(minute=1)
     return datetime(year=date.year, month=date.month, day=date.day,
                     hour=date.hour, minute=date)
 
 
 def startofweek(datex):
     weekday = datex.weekday()
-    monday = datex-extra(days=weekday)
+    monday = datex - extra(days=weekday)
     return startofday(monday)
 
 
 def endofweek(datex):
     weekday = datex.weekday()
-    nextsunday = datex+extra(days=7-weekday)
+    nextsunday = datex + extra(days=7 - weekday)
     return endofday(nextsunday)
 
 
@@ -124,7 +127,7 @@ def thisweek(date, i):
 
 def thismorning(date, i):
     beginx = startofday(date)
-    begin = beginx+extra(hours=6)
+    begin = beginx + extra(hours=6)
     end = begin + extra(hours=6)
     return begin, end
 
@@ -157,53 +160,46 @@ def thisnight(date, i):
 
 def prevyear(date, i):
     som = startofmonth(date)
-    yearagomonth = som.replace(year=(date.year - 1*i))
-    yearago = yearagomonth+extra(days=date.day-1, hours=date.hour,
-                                 minutes=date.minute)
+    yearagomonth = som.replace(year=(date.year - 1 * i))
+    yearago = yearagomonth + extra(days=date.day - 1, hours=date.hour,
+                                   minutes=date.minute)
     return yearago, date
 
 
 def prevmonth(datex, i):
     date = datex
-    for i in range(i):
-        lastday = (date + extra(days=1)).day
-        thisday = date.day
-        prem = startofmonth(date - extra(days=1))
-        thatday = prem.day
-        if lastday == 1:
-            if thatday <= thisday:
-                firstprem = prem.replace(day=thatday)
-            else:
-                firstprem = prem.replace(day=thatday)
-        else:
-            if thisday > thatday:
-                firstprem = prem.replace(day=thatday)
-            else:
-                firstprem = prem.replace(day=thisday)
-        date = firstprem + extra(hours=date.hour, minutes=date.minute)
-    monthago = date
-    return monthago, datex
+    monthago = date.day
+    for months in xrange(i):
+        if monthago != 1:
+            date = date.replace(day=1)
+        date = date - extra(days=1)
+    while True:
+        try:
+            date = date.replace(day=monthago)
+            return date,datex
+        except ValueError:
+            monthago -= 1
 
 
 def prevday(date, i):
-    return date-extra(days=1*i), date
+    return date - extra(days=1 * i), date
 
 
 def prevhour(date, i):
-    return date-extra(hours=1*i), date
+    return date - extra(hours=1 * i), date
 
 
 def prevminute(date, i):
-    return date-extra(minutes=1*i), date
+    return date - extra(minutes=1 * i), date
 
 
 def prevweek(date, i):
-    startprevweek = startofday(date-extra(days=date.weekday()))-extra(7*(i-1))
+    startprevweek = startofday(date - extra(days=7 * (i * 1)))
     return startprevweek, date
 
 
 def prevmorning(date, i):
-    yesterday = startofday(date) - extra(days=(1*i))
+    yesterday = startofday(date) - extra(days=(1 * i))
     begin = yesterday + extra(hours=6)
     end = begin + extra(hours=6)
     return begin, end
@@ -222,7 +218,7 @@ def prevevening(date, i):
 
 
 def prevnight(date, i):
-    end = startofday(date) - extra(days=(1*i))
+    end = startofday(date) - extra(days=(1 * i))
     begin = end - extra(hours=6)
     return begin, end
 
@@ -232,7 +228,7 @@ def prevnight(date, i):
 
 def lastyear(date, i):
     end = startofyear(date)
-    begin = end.replace(year=(end.year-(1*i)))
+    begin = end.replace(year=(end.year - (1 * i)))
     return begin, end
 
 
@@ -240,7 +236,7 @@ def lastmonth(date, i):
     end = startofmonth(date)
     start = end
     for x in range(i):
-        prevmonth = start-extra(days=1)
+        prevmonth = start - extra(days=1)
         start = prevmonth.replace(day=1)
     begin = start
     return begin, end
@@ -248,36 +244,36 @@ def lastmonth(date, i):
 
 def lastday(date, i):
     end = startofday(date)
-    begin = end-extra(days=(i*1))
+    begin = end - extra(days=(i * 1))
     return begin, end
 
 
 def lasthour(date, i):
     end = startofhour(date)
-    begin = end - extra(hours=(i*1))
+    begin = end - extra(hours=(i * 1))
     return begin, end
 
 
 def lastminute(date, i):
     end = startofminute(date)
-    begin = end - extra(minutes=(i*1))
+    begin = end - extra(minutes=(i * 1))
     return begin, end
 
 
 def lastweek(date, i):
     end = startofday(date - extra(days=date.weekday()))
-    begin = end - extra(days=(7*i))
+    begin = end - extra(days=(7 * i))
     return begin, end
 
 
 def lastnight(date, i):
-    begin = startofday(date) - extra(days=(1*i))
+    begin = startofday(date) - extra(days=(1 * i))
     end = begin + extra(hours=6)
     return begin, end
 
 
 def lastevening(date, i):
-    end = startofday(date) - extra(days=(1*i))
+    end = startofday(date) - extra(days=(1 * i))
     begin = end - extra(hours=6)
     return begin, end
 
@@ -301,7 +297,7 @@ def getwordsrange(words):
     if c:
         second = [cat for cat, i in timeUnits.items() if c in i][0]
     a = SOLUTION[first][second]
-    begin, end = a(datetime.now(), third) # this calls all the above methods
+    begin, end = a(datetime.now(), third)  # this calls all the above methods
     return begin, end
 
 
@@ -319,25 +315,27 @@ def process((a, b, c)):
     if b == 'x':
         return str(c(0))
     if int(b) < 0:
-        return str(c(a+int(b)))
+        return str(c(a + int(b)))
     if int(b) >= 0:
         return str(c(int(b)))
 
 
 def fromdigits(ip):
-    #  parses the input to a wellformed datetime 
+    #  parses the input to a wellformed datetime
     n = -1
-    a = ["x"]*5
+    a = ["x"] * 5
     for m in re.finditer(digitaldate,  ip):
-        n = n+1
+        n = n + 1
         if n < 5:
             a[n] = (m.group(1))
     return a
 
 #  helpers to check the min/max of date
+
+
 def checkyear(y):
     if y < 1900:
-        return 1900 # lowest allowed in structs
+        return 1900  # lowest allowed in structs
     return y if y < 9999 else 99999
 
 
@@ -414,8 +412,8 @@ WEEKDAYS = ("monday", "thuesday", "wednesday", "thursday",
             "friday", "saturday", "sunday")
 TODAY = ("today", "now")
 YESTERDAY = ("yesterday", "yes")
-itswords = PREV+LAST+THIS+YEAR+MONTH+WEEK+DAY+HOUR+MINUTE+MORNING+AFTERNOON\
-    + EVENING+NIGHT+WEEKDAYS+TODAY+YESTERDAY
+itswords = PREV + LAST + THIS + YEAR + MONTH + WEEK + DAY + HOUR + MINUTE + MORNING + AFTERNOON\
+    + EVENING + NIGHT + WEEKDAYS + TODAY + YESTERDAY
 timeUnits = {"YEAR": YEAR, "MONTH": MONTH, "WEEK": WEEK, "DAY": DAY,
              "HOUR": HOUR, "MINUTE": MINUTE, "THIS": THIS, "LAST": LAST,
              "PREV": PREV, "NIGHT": NIGHT, "MORNING": MORNING,
@@ -424,7 +422,7 @@ timeUnits = {"YEAR": YEAR, "MONTH": MONTH, "WEEK": WEEK, "DAY": DAY,
 
 #  regexpatterns to parse input
 digitaldate = re.compile('(=|x|(-[0-9]+)|([0-9]+))')
-alphadate = re.compile('([a-zA-Z]+)(\s*\d*\s*)([a-zA-Z]*)') 
+alphadate = re.compile('([a-zA-Z]+)(\s*\d*\s*)([a-zA-Z]*)')
 onedigitaldate = re.compile('(=|x|[0-9]+)')
 digits = re.compile('[0-9]+')
 ellipsepat = re.compile('(.*)(\.\.)(.*)')
@@ -516,7 +514,7 @@ def get_range_fromEllipseInput(m):
 if __name__ == '__main__':
     """ this module returns a min-float,max-float from a request.
     The request can be a verbal request or a numeric request
-    a verbal request is ex: this afternoon, yesterday, last night, 
+    a verbal request is ex: this afternoon, yesterday, last night,
     this week, last 2 months, prev year, last year, this year,
     prev 5 months..yesterday night, this morning.. prev 2 minutes
     a numeric request is ex: 2012.10.(returns the whole 10th month)
@@ -530,14 +528,14 @@ if __name__ == '__main__':
          the end and  count year, month back...
          if its friday than last week is friday to now
     prev : if its friday than the prev week is ending the sunday
-        before and a week further back 
+        before and a week further back
     and then there are these special words: yesterday, today
     for numeric requests: 2012/10/12/23/59(Y,m,d,H,mi)
     when you give part of this, it gets that: 2012 gives you all of 2012
     2012/10/01 gives you everything form the first of 10
     if you put in a '=' , you copy the number form now
-    so 2012==== copies the values form today after the 2012. 
-    an x sets the value to zero 2012:10xxxx(its okay to give 
+    so 2012==== copies the values form today after the 2012.
+    an x sets the value to zero 2012:10xxxx(its okay to give
     more x-es or =-es, gets cut off) is 2012/10/01/00:00
     You cann't do 20121001, we need something between the numbers,;:/
     are all okay
